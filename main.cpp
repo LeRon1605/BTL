@@ -1,138 +1,105 @@
-#include <GL/glut.h>
-#include "TransformMatrix.h"
 #include <math.h>
-#define VAL_PI 3.1415
-void Init()
-{
-	  glClearColor(0.0, 0.0, 0.0, 0.0);
-	  glEnable(GL_LIGHTING);
-	  glEnable(GL_LIGHT0);
-	  glEnable(GL_DEPTH_TEST);
-	
-	  GLfloat light_pos [] = {0.0, 0.0, 1.0, 0.0};
-	  glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
-	
-	  GLfloat ambient [] = {1.0, 1.0, 0.0, 1.0};
-	  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
-	
-	  GLfloat diff_use [] = {0.5, 1.0, 0.0, 1.0};
-	  glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diff_use);
-	
-	  GLfloat specular[] = {1.0, 1.0, 1.0, 1.0};
-	  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
-	
-	  GLfloat shininess = 50.0f;
-	  glMateriali(GL_FRONT, GL_SHININESS, shininess);
+#include "Drawer.h"
+Drawer drawer;
+float TransDistX, TransDistY, TransDistZ; 
+float ScaleX, ScaleY, ScaleZ;        
+float Theta;                       
+float x, y, z;
+float x1, y11, z1, x2, y2, z2;
+int choice, choiceRef;
 
+void display()
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    drawer.drawFrame();
+    gluLookAt(5.0, 5.0, 5.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+    drawer.drawCoordinateAxis();
+    glColor3f(1.0, 0.0, 0.0);
+    drawer.Draw();
+
+    switch (choice)
+    {
+	    case 1:
+	    	drawer.Translate(TransDistX, TransDistY, TransDistZ);
+	        break;
+	    case 2:
+	        drawer.Scale(ScaleX, ScaleY, ScaleZ);
+	        break;
+	    case 3:
+	    {
+	        // Rotate
+	        break;
+	    }
+	    case 4:
+	        switch (choiceRef)
+		    {
+		    case 1:
+		        drawer.Reflect(1.0, 1.0, -1.0);
+		        break;
+		    case 2:
+		        drawer.Reflect(-1.0, 1.0, 1.0);
+		        break;
+		    case 3:
+		         drawer.Reflect(1.0, -1.0, 1.0);
+		        break;
+		    }
+	        break;
+    }
+    drawer.Draw();
+    glFlush();
 }
 
-void MakeCube(const float& size)
+void init()
 {
-	  glBegin(GL_QUADS);
-	  // Front Face
-	  glNormal3f(0.0, 0.0, 1.0);
-	  glVertex3f(-size, -size, size);
-	  glVertex3f( size, -size, size);
-	  glVertex3f( size, size, size);
-	  glVertex3f(-size, size, size);
-	  // Back Face
-	  glNormal3f(0.0, 0.0, -1.0);
-	  glVertex3f(-size, -size, -size);
-	  glVertex3f(-size, size, -size);
-	  glVertex3f(size, size, -size);
-	  glVertex3f(size, -size, -size);
-	  // Top Face
-	  glNormal3f(0.0, 1.0, 0.0);
-	  glVertex3f(-size, size, -size);
-	  glVertex3f(-size, size, size);
-	  glVertex3f( size, size, size);
-	  glVertex3f( size, size, -size);
-	  // Bottom Face
-	  glNormal3f(0.0, -1.0, 0.0);
-	  glVertex3f(-size, -size, -size);
-	  glVertex3f( size, -size, -size);
-	  glVertex3f( size, -size, size);
-	  glVertex3f(-size, -size, size);
-	  // Right face
-	  glNormal3f(1.0, 0.0, 0.0);
-	  glVertex3f( size, -size, -size);
-	  glVertex3f( size, size, -size);
-	  glVertex3f( size, size, size);
-	  glVertex3f( size, -size, size);
-	  // Left Face
-	  glNormal3f(-1.0, 0.0, 0.0);
-	  glVertex3f(-size, -size, -size);
-	  glVertex3f(-size, -size, size);
-	  glVertex3f(-size, size, size);
-	  glVertex3f(-size, size, -size);
-	
-	  glEnd();
+    glOrtho(-1000.0, 1000.0, -500.0, 500.0, -500.0, 500.0);
+    glEnable(GL_DEPTH_TEST);
 }
 
-void DrawCoorDinate()
+int main(int argc, char *argv)
 {
-	  glDisable(GL_LIGHTING);
-	  glPushMatrix();
-	  glBegin(GL_LINES);
-	  glColor3f(1.0, 0.0, 0.0);
-	  glVertex3f(-100, 0.0, 0.0);
-	  glVertex3f(100, 0.0, 0.0);
-	  glEnd();
-	
-	  glBegin(GL_LINES);
-	  glColor3f(0.0, 1.0, 0.0);
-	  glVertex3f(0, -100.0, 0.0);
-	  glVertex3f(0, 100.0, 0.0);
-	  glEnd();
-	
-	  glBegin(GL_LINES);
-	  glColor3f(0.0, 0.0, 1.0);
-	  glVertex3f(0, 0.0, -100.0);
-	  glVertex3f(0, 0.0, 100.0);
-	  glEnd();
-	
-	  glPopMatrix();
-	  glEnable(GL_LIGHTING);
-}
-
-void RenderScene()
-{
-	  glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
-	  glLoadIdentity();
-	  gluLookAt(3.0, 5.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-	  DrawCoorDinate();
-	  glTranslatef(0.5, 0.0, 0.0);
-	  glPushMatrix();
-	  MakeCube(1.0);
-	  glPopMatrix();
-	  glFlush();
-}
-void ReShape(int width, int height)
-{
-	  if (height == 0)
-	  {
-	    height = 1;
-	  }
-	  float ratio = (float)width/(float)height;
-	  glViewport(0, 0, width, height);
-	  glMatrixMode(GL_PROJECTION);
-	  glLoadIdentity();
-	
-	  gluPerspective(45.0, ratio, 0.1, 100.0);
-	  glMatrixMode(GL_MODELVIEW);
-
-}
-int main()
-{
-	  glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-	  glutInitWindowSize(640, 480);
-	  glutInitWindowPosition(100, 100);
-	  glutCreateWindow("Opengl Study");
-	
-	  Init();
-	  glutReshapeFunc(ReShape);
-	  glutDisplayFunc(RenderScene);
-	  glutMainLoop();
-	
-	  return 0;
+    glutInit(&argc, &argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
+    glutInitWindowSize(1362, 750);
+    glutInitWindowPosition(0, 0);
+    glutCreateWindow("BTL");
+    init();
+    
+    float a;
+    cout << "Nhap do dai canh: ";
+    cin >> a;
+    drawer.inputPoint(a);
+    cout << "\tCac dinh ban dau: " << endl;
+    drawer.printPoint();
+    cout << "Chon phep bien doi:\n1.Tinh tien\n2.Ty le\n3.Quay\n4.Doi xung\n=>";
+    cin >> choice;
+    switch (choice)
+    {
+    case 1:
+        cout << "Nhap gia tri tinh tien theo X, Y, Z\n=>";
+        cin >> TransDistX >> TransDistY >> TransDistZ;
+        break;
+    case 2:
+        cout << "Nhap gia tri ty le theo X, Y, Z\n=>";
+        cin >> ScaleX, ScaleY, ScaleZ;
+        break;
+    case 3:
+        cout << "Nhap toa do 2 diem (x1,y1,z1) & (x2,y2,z2)\n =>";
+        cout << "Nhap gia tri x1 ,y1, z1:\n";
+        cin >> x1 >> y11 >> z1;
+        cout << "Nhap gia tri x2 ,y2, z2:\n";
+        cin >> x2 >> y2 >> z2;
+        cout << "Nhap gia tri goc quay: ";
+        cin >> Theta;
+        break;
+    case 4:
+        cout << "Chon mat phang doi xung:\n1.Oxy\n2.Oyz\n3.Oxz\n=>";
+        cin >> choiceRef;
+        break;
+    default:
+        cout << "Gia tri khong hop le!!!\n";
+        return 0;
+    }
+    glutDisplayFunc(display);
+    glutMainLoop();
+    return 0;
 }
