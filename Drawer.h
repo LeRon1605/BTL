@@ -24,5 +24,9 @@ class Drawer
         void Translate(int, int, int);
         void Scale(float, float, float);
         void Reflect(float, float, float);
+        void RotateX(float);
+        void RotateY(float);
+        void RotateZ(float);
+        void Rotate(float, float, float, float, float, float, float);
 };
 #endif

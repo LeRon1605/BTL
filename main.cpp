@@ -27,7 +27,8 @@ void display()
 	        break;
 	    case 3:
 	    {
-	        // Rotate
+	        drawer.DrawRotLine(x1, y11, z1, x2, y2, z2, x, y, z);
+            drawer.Rotate(x1, y11, z1, x2, y2, z2, Theta);
 	        break;
 	    }
 	    case 4:
@@ -80,7 +81,7 @@ int main(int argc, char *argv)
         break;
     case 2:
         cout << "Nhap gia tri ty le theo X, Y, Z\n=>";
-        cin >> ScaleX, ScaleY, ScaleZ;
+        cin >> ScaleX >> ScaleY >> ScaleZ;
         break;
     case 3:
         cout << "Nhap toa do 2 diem (x1,y1,z1) & (x2,y2,z2)\n =>";

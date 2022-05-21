@@ -145,14 +145,14 @@ Matrix Matrix::getRotateAroundY(const double theta)
 
 Matrix operator*(const Matrix &M1, const Matrix &M2)
 {
-	Matrix result(4, 4);
+	Matrix result(M1.row, M2.col);
 
-	for (int r = 0; r < 4; r++)
+	for (int r = 0; r < M1.row; r++)
 	{
-		for (int c = 0; c < 4; c++)
+		for (int c = 0; c < M2.col; c++)
 		{
 			double pre = 0.0;
-			for (int t = 0; t < 4; t++)
+			for (int t = 0; t < M2.row; t++)
 			{
 				pre += M1.data[r][t] * M2.data[t][c];
 			}

@@ -1,8 +1,9 @@
 #include "Drawer.h"
 #include <iomanip>
+#include <math.h>
 Drawer::Drawer() : matrix(4, 4)
 {
-	matrix.unitMatrix();
+    matrix.unitMatrix();
 }
 void Drawer::inputPoint(const double &a)
 {
@@ -76,7 +77,7 @@ void Drawer::Transpoints()
             pointsFin[k][i] = matrix.at(i, 0) * points[k][0] + matrix.at(i, 1) * points[k][1] + matrix.at(i, 2) * points[k][2] + matrix.at(i, 3);
     for (int k = 0; k < 8; k++)
         for (int i = 0; i < 3; i++)
-        		this -> points[k][i] = pointsFin[k][i];
+            this->points[k][i] = pointsFin[k][i];
     cout << "Cac dinh sau khi bien doi" << endl;
     printPoint();
 }
@@ -185,7 +186,7 @@ void Drawer::Draw()
 
 void Drawer::Translate(int tx, int ty, int tz)
 {
-	Matrix m;
+    Matrix m;
     matrix = matrix * m.getTranslate(tx, ty, tz);
     cout << "Ma tran tinh tien:" << endl;
     cout << matrix;
@@ -195,7 +196,7 @@ void Drawer::Translate(int tx, int ty, int tz)
 void Drawer::Scale(float sx, float sy, float sz)
 {
     Matrix m;
-	matrix = m.getScale(sx, sy, sz) * matrix;
+    matrix = m.getScale(sx, sy, sz) * matrix;
     cout << "Ma tran ty le:" << endl;
     cout << matrix;
     Transpoints();
@@ -203,9 +204,50 @@ void Drawer::Scale(float sx, float sy, float sz)
 
 void Drawer::Reflect(float rx, float ry, float rz)
 {
-	Matrix m;
-	matrix = m.getReflect(rx, ry, rz) * matrix;
-	cout << "Ma tran doi xung:" << endl;
-	cout << matrix;
-	Transpoints();
+    Matrix m;
+    matrix = m.getReflect(rx, ry, rz) * matrix;
+    cout << "Ma tran doi xung:" << endl;
+    cout << matrix;
+    Transpoints();
+}
+
+void Drawer::RotateX(float angle)
+{
+    Matrix m;
+    matrix = m.getRotateAroundX(angle) * matrix;
+    cout << "Ma tran quay theo X:" << endl;
+    cout << matrix;
+}
+
+void Drawer::RotateY(float angle)
+{
+    Matrix m;
+    matrix = m.getRotateAroundY(angle) * matrix;
+    cout << "Ma tran quay theo Y:" << endl;
+    cout << matrix;
+}
+
+void Drawer::RotateZ(float angle)
+{
+    Matrix m;
+    matrix = m.getRotateAroundZ(angle) * matrix;
+    cout << "Ma tran quay theo Z:" << endl;
+    cout << matrix;
+}
+
+void Drawer::Rotate(float x1, float y1, float z1, float x2, float y2, float z2, float Theta)
+{
+    float MOD = sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) + (z2 - z1) * (z2 - z1));
+    float x = (x2 - x1) / MOD;
+    float y = (y2 - y1) / MOD;
+    float z = (z2 - z1) / MOD;
+    Translate(-x1, -y1, -z1);
+    float ThetaDash = 1260 * atan(y / z) / 22;
+    RotateX(ThetaDash);
+    RotateY(1260 * asin(-x) / 22);
+    RotateZ(Theta);
+	cout << "Bien doi nguoc lai:\n";
+    RotateY(1260 * asin(x) / 22);
+    RotateX(-ThetaDash);
+    Translate(x1, y1, z1);
 }
